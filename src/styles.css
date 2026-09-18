@@ -1,0 +1,333 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-panel: var(--panel);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-status: var(--status);
+  --color-icon: var(--icon);
+  --color-tile: var(--tile);
+  --color-tile-active: var(--tile-active);
+  --color-scene-muted: var(--scene-muted);
+  --font-display: "Barlow Condensed", sans-serif;
+  --font-sans: "Barlow", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --shadow-tile: 0 16px 42px color-mix(in oklab, var(--background) 48%, transparent);
+  --shadow-panel: 0 28px 90px color-mix(in oklab, var(--background) 72%, transparent);
+}
+
+:root {
+  --radius: 0.375rem;
+  --background: oklch(0.12 0.015 155);
+  --foreground: oklch(0.96 0.012 115);
+  --card: oklch(0.18 0.018 155 / 88%);
+  --card-foreground: oklch(0.96 0.012 115);
+  --panel: oklch(0.16 0.018 155 / 97%);
+  --primary: oklch(0.89 0.19 118);
+  --primary-foreground: oklch(0.15 0.02 155);
+  --secondary: oklch(0.28 0.025 155);
+  --secondary-foreground: oklch(0.96 0.012 115);
+  --muted: oklch(0.25 0.018 155);
+  --muted-foreground: oklch(0.74 0.02 145);
+  --accent: oklch(0.28 0.035 145 / 82%);
+  --accent-foreground: oklch(0.97 0.01 115);
+  --border: oklch(0.79 0.025 145 / 24%);
+  --input: oklch(0.32 0.02 150);
+  --ring: oklch(0.89 0.19 118);
+  --status: oklch(0.76 0.18 145);
+  --icon: oklch(0.13 0.018 155 / 76%);
+  --tile: oklch(0.16 0.018 155 / 58%);
+  --tile-active: oklch(0.22 0.028 150 / 78%);
+  --scene-muted: oklch(0.86 0.018 140);
+  --scene-wash: linear-gradient(105deg, oklch(0.08 0.015 155 / 88%) 0%, oklch(0.09 0.018 155 / 62%) 52%, oklch(0.11 0.02 75 / 45%) 100%);
+  --tile-wash: linear-gradient(180deg, oklch(0.1 0.015 155 / 12%), oklch(0.09 0.018 155 / 84%));
+  --modal: oklch(0.07 0.012 155 / 84%);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html { color-scheme: dark; }
+  body {
+    margin: 0;
+    min-width: 320px;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    letter-spacing: 0;
+  }
+  html, body { background-color: transparent; }
+  button { cursor: pointer; }
+}
+
+@utility bg-scene-wash { background: var(--scene-wash); }
+@utility bg-tile-wash { background: var(--tile-wash); }
+@utility bg-modal { background-color: var(--modal); backdrop-filter: blur(10px); }
+
+.pause-grid {
+  display: grid;
+  width: 100%;
+  height: 600px;
+  grid-template-columns: 1.45fr 1fr 1fr 1.15fr;
+  grid-template-rows: 1fr 1fr minmax(0, 1fr) 46px;
+  grid-template-areas:
+    "players players settings news"
+    "rules   map     map      news"
+    "help    map     map      return"
+    "help    map     map      disconnect";
+  gap: 0.85rem;
+}
+.tile-players { grid-area: players; }
+.tile-settings { grid-area: settings; }
+.tile-news { grid-area: news; }
+.tile-rules { grid-area: rules; }
+.tile-map { grid-area: map; }
+.tile-help { grid-area: help; }
+.tile-return { grid-area: return; }
+.tile-disconnect { grid-area: disconnect; }
+
+
+/* Laser bar sweep animation for hover effects */
+@keyframes neon-laser-sweep {
+  0% { transform: translateX(-120%); }
+  50% { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+
+.laser-sweep-active {
+  animation: neon-laser-sweep 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Subtle Warning Shake specifically for Disconnect tile on hover */
+@keyframes subtle-disconnect-shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: translateX(-1.2px); }
+  80% { transform: translateX(1.2px); }
+  100% { transform: translateX(0); }
+}
+
+.disconnect-shake-active,
+.disconnect-hover-shake:hover {
+  animation: subtle-disconnect-shake 360ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Vivid Crimson Neon Highlight Glow for Disconnect tile on hover */
+@keyframes disconnect-neon-highlight {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.45), inset 0 0 8px rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(239, 68, 68, 0.85), inset 0 0 14px rgba(239, 68, 68, 0.4);
+    border-color: rgba(254, 120, 120, 1);
+  }
+}
+
+.disconnect-neon-active,
+.disconnect-neon-glow:hover {
+  animation: disconnect-neon-highlight 1.5s ease-in-out infinite alternate;
+}
+
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 1.8s ease-in-out infinite;
+}
+
+/* Header & Footer Animations */
+.menu-header-in {
+  animation: header-slide-in 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.menu-header-out {
+  animation: header-slide-out 320ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+.menu-footer-in {
+  animation: footer-slide-in 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.menu-footer-out {
+  animation: footer-slide-out 320ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes header-slide-in {
+  from { opacity: 0; transform: translateY(-40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes header-slide-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-30px); }
+}
+@keyframes footer-slide-in {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes footer-slide-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(30px); }
+}
+
+/* Individual Directional Slide-in Animations for Tiles */
+.tile-enter-left {
+  opacity: 0;
+  animation: tile-anim-left 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.tile-enter-right {
+  opacity: 0;
+  animation: tile-anim-right 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.tile-enter-top {
+  opacity: 0;
+  animation: tile-anim-top 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.tile-enter-bottom {
+  opacity: 0;
+  animation: tile-anim-bottom 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.tile-enter-center {
+  opacity: 0;
+  animation: tile-anim-center 640ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes tile-anim-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-220px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes tile-anim-right {
+  0% {
+    opacity: 0;
+    transform: translateX(220px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes tile-anim-top {
+  0% {
+    opacity: 0;
+    transform: translateY(-180px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tile-anim-bottom {
+  0% {
+    opacity: 0;
+    transform: translateY(180px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tile-anim-center {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.78);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Exit Animations for Tiles */
+.tile-exit-left {
+  animation: tile-out-left 340ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+.tile-exit-right {
+  animation: tile-out-right 340ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+.tile-exit-top {
+  animation: tile-out-top 340ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+.tile-exit-bottom {
+  animation: tile-out-bottom 340ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+.tile-exit-center {
+  animation: tile-out-center 340ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes tile-out-left {
+  0% { opacity: 1; transform: translateX(0) scale(1); }
+  100% { opacity: 0; transform: translateX(-180px) scale(0.94); }
+}
+@keyframes tile-out-right {
+  0% { opacity: 1; transform: translateX(0) scale(1); }
+  100% { opacity: 0; transform: translateX(180px) scale(0.94); }
+}
+@keyframes tile-out-top {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-140px) scale(0.94); }
+}
+@keyframes tile-out-bottom {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(140px) scale(0.94); }
+}
+@keyframes tile-out-center {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.85); }
+}
+
+.animate-detail-in { animation: detail-in 240ms ease-out both; }
+.menu-fade { animation: menu-fade-in 420ms ease-out both; }
+
+.volume-slider {
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+@keyframes menu-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes detail-in {
+  from { opacity: 0; transform: scale(.96) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

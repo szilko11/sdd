@@ -1,0 +1,6 @@
+{
+  "name": "SzCode Pause Menu | FiveM UI",
+  "description": "Egyedi, képes rácsrendszerű FiveM pause menu SzCode fejlesztésében.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
